@@ -9,6 +9,9 @@ call build_pasinit
 
 call src_insall %srcdir% %libname%
 
+call src_get %srcdir% syn_syn.ins.pas
+copya syn_syn.ins.pas (cog)lib/syn_syn.ins.pas
+
 call src_pas %srcdir% %libname%_addstat %1
 call src_pas %srcdir% %libname%_close %1
 call src_pas %srcdir% %libname%_comblock %1
