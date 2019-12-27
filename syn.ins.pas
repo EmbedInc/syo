@@ -318,7 +318,13 @@ procedure syn_infile_push (            {save old input state, switch to new file
   in      fnam: univ string_var_arg_t; {name of new input file}
   in      ext: univ string_var_arg_t;  {file name suffix, if any}
   out     stat: sys_err_t);            {completion status code}
-  extern;
+  val_param; extern;
+
+procedure syn_infile_push_sext (       {INFILE_PUSH with string fnam extension}
+  in      fnam: univ string_var_arg_t; {name of new input file}
+  in      ext: string;                 {file name suffix, blank for use FNAM as is}
+  out     stat: sys_err_t);            {completion status code}
+  val_param; extern;
 
 procedure syn_infile_read (            {read next line from current input file}
   out     line_p: syn_line_p_t;        {will point to descriptor for line from file}

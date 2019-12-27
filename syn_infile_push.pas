@@ -1,22 +1,26 @@
-{   Subroutine SYN_INFILE_PUSH (FNAM, EXT, STAT)
-*
-*   Save the current input environment and then switch input to
-*   the start of the indicated file.  FNAM is the file name, and EXT is an
-*   optional file name suffix.  The input environment can be restored to its
-*   state right before this call with routine SYN_INFILE_POP.
-}
-module syn_INFILE_PUSH;
+module syn_infile_push;
 define syn_infile_push;
+define syn_infile_push_sext;
 %include 'syn2.ins.pas';
 
 var
   ins: string_var16_t :=
     [str := '.ins.', len := 5, max := sizeof(ins.str)];
-
+{
+********************************************************************************
+*
+*   Subroutine SYN_INFILE_PUSH (FNAM, EXT, STAT)
+*
+*   Save the current input environment and then switch input to the start of the
+*   indicated file.  FNAM is the file name, and EXT is an optional file name
+*   suffix.  The input environment can be restored to its state right before
+*   this call with routine SYN_INFILE_POP.
+}
 procedure syn_infile_push (            {save old input state, switch to new file}
   in      fnam: univ string_var_arg_t; {name of new input file}
   in      ext: univ string_var_arg_t;  {file name suffix, if any}
   out     stat: sys_err_t);            {completion status code}
+  val_param;
 
 var
   f_p: syn_file_p_t;                   {pointer to new file descriptor}
@@ -71,4 +75,27 @@ begin
     ;
   file_p := f_p;                       {make new file descriptor current}
   file_name_p := nil;                  {indicate logical source is also real source}
+  end;
+{
+********************************************************************************
+*
+*   Subroutine SYN_INFILE_PUSH_SEXT (FNAM, EXT, STAT)
+*
+*   Like SYN_INFILE_PUSH, except that EXT is a Pascal string instead of a var
+*   string.
+}
+procedure syn_infile_push_sext (       {INFILE_PUSH with string fnam extension}
+  in      fnam: univ string_var_arg_t; {name of new input file}
+  in      ext: string;                 {file name suffix, blank for use FNAM as is}
+  out     stat: sys_err_t);            {completion status code}
+  val_param;
+
+var
+  vext: string_var80_t;
+
+begin
+  vext.max := size_char(vext.str);     {init local var string}
+
+  string_vstring (vext, ext, size_char(ext)); {make var string EXT}
+  syn_infile_push (fnam, vext, stat);  {do the work}
   end;
