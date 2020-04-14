@@ -7,5 +7,6 @@ set buildname=
 call treename_var "(cog)source/syn" sourcedir
 set libname=syn
 set fwname=
-make_debug "C:\embed\src\syn\debug_syn.bat"
-call "C:\embed\src\syn\debug_syn.bat"
+call treename_var "(cog)src/%srcdir%/debug_%libname%.bat" tnam
+make_debug "%tnam%"
+call "%tnam%"
