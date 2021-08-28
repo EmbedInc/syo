@@ -1,6 +1,4 @@
-{   Application-visible include file for the syntaxer.  This is the only include
-*   file needed for application programs that are using the syntaxer to parse
-*   a formal language.
+{   Public include file for the syntaxer.
 }
 const
   syn_subsys_k = -8;                   {subsystem ID for the SYN library}
@@ -9,8 +7,9 @@ const
   syn_stat_syerr_eof_k = 3;            {syntax error at end of file}
   syn_stat_syerr_eod_k = 4;            {syntax error at end of data}
 {
-*   Mnemonics for reserved character values that have special meaning.  The values
-*   here must always be negative, and should be as close to zero as possible.
+*   Mnemonics for reserved character values that have special meaning.  The
+*   values here must always be negative, and should be as close to zero as
+*   possible.
 }
   syn_ichar_eol_k = -1;                {end of line}
   syn_ichar_eof_k = -2;                {end of file}
@@ -25,14 +24,15 @@ const
 
 type
 {
-*   Mnemonics for the flag value that indicates whether a syntax matched the input
-*   stream.
+*   Mnemonics for the flag value that indicates whether a syntax matched the
+*   input stream.
 }
   syn_mflag_k_t = (
     syn_mflag_no_k,                    {syntax did not match}
     syn_mflag_yes_k);                  {syntax did match}
 {
-*   Mnemonics for flag value used to control how input character case is handled.
+*   Mnemonics for flag value used to control how input character case is
+*   handled.
 }
   syn_charcase_k_t = (
     syn_charcase_down_k,               {convert input to lower case for matching}
@@ -41,15 +41,7 @@ type
 {
 *   Data structures that need to be visible to application programs.
 }
-  syn_file_p_t =                       {pointer to a file descriptor}
-    ^syn_file_t;
-
-  syn_line_p_t =                       {pointer to an input line descriptor}
-    ^syn_line_t;
-
-  syn_crange_p_t =                     {pointer to range of characters descriptor}
-    ^syn_crange_t;
-
+  syn_file_p_t = ^syn_file_t;
   syn_file_t = record                  {descriptor for an input file}
     uname: string_treename_t;          {original name as received}
     conn_p: file_conn_p_t;             {pointer to file connection handle}
@@ -59,6 +51,7 @@ type
     opened: boolean;                   {TRUE if file opened by this library}
     end;
 
+  syn_line_p_t = ^syn_line_t;
   syn_line_t = record                  {descriptor for one input line}
     file_p: syn_file_p_t;              {points to file descriptor}
     line_n: sys_int_machine_t;         {line number, first is 1}
@@ -66,6 +59,7 @@ type
     c: array[1..1] of char;            {0-127 ASCII values for the characters}
     end;
 
+  syn_crange_p_t = ^syn_crange_t;
   syn_crange_t = record                {descriptor for one range of input chars}
     line_p: syn_line_p_t;              {points to descriptor of line chars are from}
     start_pos: sys_int_machine_t;      {starting character number within line}
@@ -86,8 +80,8 @@ type
     end;
 {
 *   Syntax tree position handle.  The application should never access individual
-*   fields in this data structure.  The entire data structure should only
-*   be used in passing to SYN routines.
+*   fields in this data structure.  The entire data structure should only be
+*   used in passing to SYN routines.
 }
   syn_tpos_t = record                  {syntax tree position handle}
     tree_pos: univ_ptr;                {pointer to current syntax tree frame}
@@ -102,7 +96,7 @@ syn_preproc_p_t = ^procedure (         {pointer to a pre-processor routine}
   out     start_char: sys_int_machine_t; {starting char within line, first = 1}
   out     n_chars: sys_int_machine_t); {number of characters returned by this call}
 {
-**********************************************************************************
+********************************************************************************
 *
 *   Entry points intended for use by the application program.
 }
@@ -291,14 +285,14 @@ procedure syn_tree_err;                {set up tree for error re-parse}
 procedure syn_tree_setup;              {set up tree for traversing and getting tags}
   extern;
 {
-**********************************************************************************
+********************************************************************************
 *
-*   The following entry points are intended for use by pre-processors.
-*   These are routines that may be installed by applications to do some
-*   processing on the raw input stream before being passed to the syntaxer.
-*   Pre-processors are installed with the call SYN_PREPROC_SET, declared above.
-*   The default pre-processor just passes the top level input file
-*   directly to the syntaxer without alteration.
+*   The following entry points are intended for use by pre-processors.  These
+*   are routines that may be installed by applications to do some processing on
+*   the raw input stream before being passed to the syntaxer.  Pre-processors
+*   are installed with the call SYN_PREPROC_SET, declared above.  The default
+*   pre-processor just passes the top level input file directly to the syntaxer
+*   without alteration.
 }
 procedure syn_infile_name_lnum (       {set next line number of logical input file}
   in      lnum: sys_int_machine_t);    {line number of next line "read"}
@@ -331,12 +325,12 @@ procedure syn_infile_read (            {read next line from current input file}
   out     stat: sys_err_t);            {completion status code}
   extern;
 {
-**********************************************************************************
+********************************************************************************
 *
-*   The following entry points are standard names of the two special case syntaxes.
-*   These only exist if they were explicitly named such in the .SYN file.  They
-*   are not required by the SYN library, but are assumed to exist by some general
-*   applications.
+*   The following entry points are standard names of the two special case
+*   syntaxes.  These only exist if they were explicitly named such in the .SYN
+*   file.  They are not required by the SYN library, but are assumed to exist by
+*   some general applications.
 }
 procedure toplev (                     {parse top level syntax}
   out     mflag: syn_mflag_k_t);       {syntax matched yes/no, use SYN_MFLAG_xxx_K}
@@ -346,16 +340,17 @@ procedure errgo (                      {scan to recover from error}
   out     mflag: syn_mflag_k_t);       {syntax matched yes/no, use SYN_MFLAG_xxx_K}
   extern;
 {
-**********************************************************************************
+********************************************************************************
 *
-*   Entry points used by the syntax parsing routines when they are checking syntax.
-*   These are not normally used by an application program except when "manually"
-*   creating a syntax parsing routine.  All the entry point names in this
-*   section start with "syn_p_", to indicate they are called from the parsing
-*   routines, and are not intended to be called directly by an application.
+*   Entry points used by the syntax parsing routines when they are checking
+*   syntax.  These are not normally used by an application program except when
+*   "manually" creating a syntax parsing routine.  All the entry point names in
+*   this section start with "syn_p_", to indicate they are called from the
+*   parsing routines, and are not intended to be called directly by an
+*   application.
 }
 procedure syn_p_start_routine (        {start new syntax parsing routine}
-  in      name_str: string;            {syntax name, must not be volitile variable}
+  in      name_str: string;            {syntax name, must not be volatile variable}
   in      name_len: sys_int_machine_t); {number of characters in NAME_STR}
   extern;
 

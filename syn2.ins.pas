@@ -9,8 +9,8 @@
 
 type
 {
-*   Mnemonics for each of the different types of items that may be written to the
-*   syntax tree.
+*   Mnemonics for each of the different types of items that may be written to
+*   the syntax tree.
 }
   tframe_k_t = (                       {IDs for the syntax tree items}
     tframe_tag_k,                      {tag for syntax construction}
@@ -19,8 +19,8 @@ type
     tframe_end_k);                     {end of syntax tree}
   tframe_k_p_t = ^tframe_k_t;
 {
-*   The following data structures are templates for what each type of frame on the
-*   syntax tree looks like.
+*   The following data structures are templates for what each type of frame on
+*   the syntax tree looks like.
 }
   tree_frame_tag_p_t = ^tree_frame_tag_t; {pointers to specific frame types}
   tree_frame_down_p_t = ^tree_frame_down_t;
