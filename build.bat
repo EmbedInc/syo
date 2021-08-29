@@ -3,6 +3,6 @@ rem
 rem   Build everything from this source directory.
 rem
 setlocal
-call godir "(cog)source/syn"
+call godir "(cog)source/syo"
 
 call build_lib

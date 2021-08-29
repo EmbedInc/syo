@@ -2,15 +2,15 @@
 rem
 rem   BUILD_LIB [-dbg]
 rem
-rem   Build the SYN library.
+rem   Build the SYO library.
 rem
 setlocal
 call build_pasinit
 
 call src_insall %srcdir% %libname%
 
-call src_get %srcdir% syn_syn.ins.pas
-copya syn_syn.ins.pas (cog)lib/syn_syn.ins.pas
+call src_get %srcdir% syo_syn.ins.pas
+copya syo_syn.ins.pas (cog)lib/syo_syn.ins.pas
 
 call src_pas %srcdir% %libname%_addstat %1
 call src_pas %srcdir% %libname%_close %1
