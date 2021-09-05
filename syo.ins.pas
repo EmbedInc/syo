@@ -1,4 +1,11 @@
-{   Public include file for the syntaxer.
+{   Public include file for the "old" syntaxer.  This library used to be called
+*   SYN, but was renamed to SYO when the new syntaxer was created in 2021.  The
+*   new syntaxer is now called SYN.
+*
+*   This library is not intended for new applications.  The syntax definition
+*   files (.SYN) are compatible from the old to the new syntaxer.  See the new
+*   SYN library include file for more information on the differences between the
+*   old and new syntaxers.
 }
 const
   syo_subsys_k = -8;                   {subsystem ID for the SYO library}
@@ -177,7 +184,7 @@ procedure syo_get_name (               {get name of current syntax level}
   in out  name: univ string_var_arg_t); {will be empty if at non-existant level}
   extern;
 
-procedure syo_get_tag (                {unconditionally get next tag from syo tree}
+procedure syo_get_tag (                {unconditionally get next tag from syn tree}
   out     tag: sys_int_machine_t;      {tag value, or SYO_TAG_xxx_K}
   out     string_handle: syo_string_t); {handle to string for this tag}
   extern;
