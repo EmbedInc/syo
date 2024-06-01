@@ -15,6 +15,9 @@ var
 *   indicated file.  FNAM is the file name, and EXT is an optional file name
 *   suffix.  The input environment can be restored to its state right before
 *   this call with routine SYO_INFILE_POP.
+*
+*   FNAM is interpreted in the context of the directory the current input file
+*   is in.
 }
 procedure syo_infile_push (            {save old input state, switch to new file}
   in      fnam: univ string_var_arg_t; {name of new input file}
@@ -27,9 +30,27 @@ var
   conn_p: file_conn_p_t;               {pointer to file connection}
   ext_str: string_var80_t;             {file name suffix padded to STRING size}
   i: string_index_t;
+  odir: string_treename_t;             {original current directory}
+  fdir: string_treename_t;             {current directory to be in when opening file}
+  stat2: sys_err_t;                    {to avoid corrupting STAT}
 
 begin
-  ext_str.max := sizeof(ext_str.str);  {init local var string}
+  ext_str.max := size_char(ext_str.str); {init local var strings}
+  odir.max := size_char(odir.str);
+  fdir.max := size_char(fdir.str);
+
+  odir.len := 0;                       {init to no saved current directory}
+  if                                   {there is a current input file ?}
+      (file_p <> nil) and then
+      (file_p^.conn_p <> nil)
+      then begin
+    string_pathname_split (            {get input file directory into FDIR}
+      file_p^.conn_p^.tnam, fdir, odir);
+    file_currdir_get (odir, stat);     {save current directory in ODIR}
+    if sys_error(stat) then return;
+    file_currdir_set (fdir, stat);     {go to input file directory}
+    if sys_error(stat) then return;
+    end;
 
   util_mem_grab (                      {allocate memory for new file connection}
     sizeof(conn_p^),                   {amount of memory to grab}
@@ -40,6 +61,9 @@ begin
   string_copy (ext, ext_str);          {make local copy of file name suffix}
   string_fill (ext_str);               {fill unused space with blanks}
   file_open_read_text (fnam, ext_str.str, conn_p^, stat); {open new input file}
+  if odir.len > 0 then begin           {we have saved original current directory ?}
+    file_currdir_set (odir, stat2);    {go back to the original current directory}
+    end;
   if sys_error(stat) then begin        {error on opening file ?}
     util_mem_ungrab (conn_p, mem_context_p^); {release mem for file connection}
     return;                            {return with error}
